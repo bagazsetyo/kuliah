@@ -1,0 +1,12 @@
+Tiket bioskop indo XXI
+kode : 221486
+harga : Rp 100.000 
+=================================
+Tiket bioskop indo XXI
+kode : 245268
+harga : Rp 100.000 
+=================================
+Tiket bioskop indo XXI
+kode : 723338
+harga : Rp 100.000 
+=================================

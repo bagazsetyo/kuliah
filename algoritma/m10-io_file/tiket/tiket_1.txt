@@ -1,0 +1,12 @@
+Tiket bioskop indo XXI
+kode : 843402
+harga : Rp 100.000 
+=================================
+Tiket bioskop indo XXI
+kode : 534037
+harga : Rp 100.000 
+=================================
+Tiket bioskop indo XXI
+kode : 574160
+harga : Rp 100.000 
+=================================
