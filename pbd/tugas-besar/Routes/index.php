@@ -1,44 +1,48 @@
 <?php 
 
-// use Routes\GroupUser;
+use Routes\Route;
 
-// use Route;
+use Controllers\HomeController;
 
-// $request = $_SERVER['REQUEST_URI'];
+// $home = new HomeController();
+// $home->index();
 
+$request = $_SERVER['REQUEST_URI'];
 
-// class Index {
-
-
-//     public function __construct()
-//     {
-//         echo 11;   
-//     }
-
-// }
-
-// $s = new GroupUser();
-// var_dump($s);
-
-// new Route();
-// new Route('/', 'HomeController', 'index', []);
-// Route::get('/', 'HomeController', 'index');
-
-// switch ($request) {
-//     case '/' :
-//         require __DIR__ . '/../views/index.php';
-//         break;
-//     case '' :
-//         require __DIR__ . '/../views/index.php';
-//         break;
-//     case '/about' :
-//         require __DIR__ . '/../views/about.php';
-//         break;
-//     default:
-//         http_response_code(404);
-//         require __DIR__ . '/../views/404.php';
-//         break;
-// }
+switch ($request) {
+    case '/' :
+        Route::any('GET', '/', [HomeController::class, 'index']);
+        break;
+    case '' :
+        Route::any('GET', '/', function() {
+            require __DIR__ . '/../views/index.php';
+        });
+        break;
+    case '/parkir' :
+        Route::any('GET', '/parkir', function() {
+            require __DIR__ . '/../views/parkir.php';
+        });
+        break;
+    case '/parkir/create' :
+        Route::any('POST', '/parkir/create', function() {
+            require __DIR__ . '/../views/parkir-create.php';
+        });
+        break;
+    case '/parkir/delete' :
+        Route::any('POST', '/parkir/delete', function() {
+            require __DIR__ . '/../views/parkir-delete.php';
+        });
+        break;
+    case '/parkir/karcis' :
+        Route::any('GET', '/parkir/karcis', function() {
+            require __DIR__ . '/../views/karcis.php';
+        });
+        break;
+    default:
+        http_response_code(404);
+        require __DIR__ . '/../views/404.php';
+        break;
+}
 
 // class Sisi {
 //     public function __construct()
