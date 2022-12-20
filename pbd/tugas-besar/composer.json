@@ -1,0 +1,22 @@
+{
+    "name": "pbd/tugas-besar",
+    "authors": [
+        {
+            "name": "bagaz",
+            "email": "bagazfrazetyo@gmail.com"
+        }
+    ],
+    "require": {
+        "fzaninotto/faker": "^1.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Controllers\\": "Controllers/",
+            "Models\\": "Models/",
+            "Views\\": "Views/",
+            "Databases\\": "Databases/",
+            "Routes\\": "Routes/",
+            "Helpers\\": "Helpers/"
+        }
+    }
+}

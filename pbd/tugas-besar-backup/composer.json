@@ -1,0 +1,14 @@
+{
+    "name": "microvac/pbd",
+    "authors": [
+        {
+            "name": "bagaz",
+            "email": "bagazfrazetyo@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+        }
+    }
+}
