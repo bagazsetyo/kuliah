@@ -5,7 +5,11 @@ use Controllers\HomeController;
 
 class Route {
 
-    public static function any($method, $uri, $controller) {
+    public static function any($method, $uri, $controller, $middleware = null) {
+        if ($middleware) {
+            $middleware = 'App\Middleware\\' . $middleware;
+            new $middleware();
+        }
         if ($_SERVER['REQUEST_METHOD'] == $method && $_SERVER['REQUEST_URI'] == $uri) {
             if (is_callable($controller)) {
                 $class = new $controller[0];

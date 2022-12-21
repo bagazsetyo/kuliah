@@ -3,12 +3,9 @@
 namespace Controllers;
 use Databases\DB;
 
-class HomeController {
+class HomeController extends Controller {
     public function index() {
 
-        $data = DB::query("select * from pasien");
-
-        // send param to view index.php 
-        require __DIR__ . '/../views/index.php';
+        $this->view('index');
     }
 }

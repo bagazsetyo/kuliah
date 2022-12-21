@@ -16,7 +16,8 @@
             "Views\\": "Views/",
             "Databases\\": "Databases/",
             "Routes\\": "Routes/",
-            "Helpers\\": "Helpers/"
+            "Helpers\\": "Helpers/",
+            "App\\": "App/"
         }
     }
 }

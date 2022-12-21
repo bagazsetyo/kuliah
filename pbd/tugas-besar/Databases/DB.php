@@ -16,15 +16,9 @@ class DB {
         return new PDO("mysql:host=$host:$port;dbname=$db",$user,$pass);
     }
 
-    // test connection 
     public static function testConnection()
     {
         $conn = self::getConnection();
-        if ($conn) {
-            echo 'connected';
-        } else {
-            echo 'not connected';
-        }
     }
 
     public static function query($query, $params = [])
@@ -34,4 +28,34 @@ class DB {
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
+
+    public function setTableName($table_name)
+    {
+        $this->table_name = $table_name;
+    }
+
+    public function table($table_name)
+    {
+        $db = new DB();
+        $db->setTableName($table_name);
+        return $db;
+    }
+
+    public function get()
+    {
+        $conn = self::getConnection();
+        $stmt = $conn->prepare("select * from {$this->table_name}");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    // return all function on this 
+    public function __call($name, $arguments)
+    {
+        $conn = self::getConnection();
+        $stmt = $conn->prepare("select * from {$this->table_name} $name");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
 }

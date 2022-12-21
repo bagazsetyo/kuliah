@@ -3,6 +3,8 @@
 use Routes\Route;
 
 use Controllers\HomeController;
+use Controllers\AuthController;
+use Controllers\AdminController;
 
 // $home = new HomeController();
 // $home->index();
@@ -12,6 +14,12 @@ $request = $_SERVER['REQUEST_URI'];
 switch ($request) {
     case '/' :
         Route::any('GET', '/', [HomeController::class, 'index']);
+        break;
+    case '/login' :
+        Route::any('GET', '/login', [AuthController::class, 'login']);
+        break;
+    case '/admin/list' :
+        Route::any('GET', '/admin/list', [AdminController::class, 'list']);
         break;
     case '' :
         Route::any('GET', '/', function() {
