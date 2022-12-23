@@ -13,6 +13,7 @@ class DB {
         $user = 'root';
         $pass = '';
 
+        
         return new PDO("mysql:host=$host:$port;dbname=$db",$user,$pass);
     }
 
