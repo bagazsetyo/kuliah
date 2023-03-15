@@ -15,6 +15,10 @@ CREATE TABLE barang(
 
 alter table BARANG add stok_barang int;
 
+-- INSERT 1 BARANG 
+INSERT INTO barang (KODE_BARANG, NAMA_BARANG, SATUAN_BARANG,
+STOK_BARANG) VALUES ('B001','Lemari Es','unit',11);
+
 -- create table with name SUPLIER and column
 -- 1. KODE_SUPLIER NOT NULL CHAR 6
 -- 2. NAMA_SUPLIER VARCHAR2 30

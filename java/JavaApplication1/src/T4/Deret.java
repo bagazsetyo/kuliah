@@ -12,7 +12,7 @@ import java.util.Scanner;
  */
 public class Deret {
     
-    private final int nilaiAwal, beda, jumlahKemunculan;
+    private static int nilaiAwal, beda, jumlahKemunculan;
     
     public Deret(int nilaiAwal, int beda, int jumlahKemunculan)
     {
