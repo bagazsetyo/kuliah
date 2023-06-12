@@ -1,27 +1,39 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package UAS;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-
 /**
  *
  * @author Microvac
  */
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class Menu {
-    private static final Map<Integer, Runnable> MENU_OPTIONS = new HashMap<>();
+    private static final Map<Integer, Map<Integer, MenuItem>> MENU_OPTIONS = new HashMap<>();
 
     static {
-        MENU_OPTIONS.put(1, Menu::lihatUser);
-        MENU_OPTIONS.put(2, Menu::tambahUser);
-        MENU_OPTIONS.put(3, Menu::hapusUser);
-        MENU_OPTIONS.put(4, Menu::lihatQuiz);
-        MENU_OPTIONS.put(5, Menu::tambahQuiz);
-        MENU_OPTIONS.put(6, Menu::hapusQuiz);
+        // Role 1: Mengerjakan quiz
+        Map<Integer, MenuItem> role1Menu = new HashMap<>();
+        role1Menu.put(1, new MenuItem("Lihat Quiz", Menu::lihatQuiz));
+        role1Menu.put(2, new MenuItem("Tambah Quiz", Menu::tambahQuiz));
+        role1Menu.put(3, new MenuItem("Hapus Quiz", Menu::hapusQuiz));
+        MENU_OPTIONS.put(1, role1Menu);
+
+        // Role 2: Mengerjakan quiz, melihat semua user
+        Map<Integer, MenuItem> role2Menu = new HashMap<>();
+        role2Menu.put(1, new MenuItem("Lihat User", Menu::lihatUser));
+        role2Menu.put(2, new MenuItem("Lihat Quiz", Menu::lihatQuiz));
+        role2Menu.put(3, new MenuItem("Tambah Quiz", Menu::tambahQuiz));
+        role2Menu.put(4, new MenuItem("Hapus Quiz", Menu::hapusQuiz));
+        MENU_OPTIONS.put(2, role2Menu);
+
+        // Role 3: Mengerjakan quiz, melihat semua user, edit user, hapus user
+        Map<Integer, MenuItem> role3Menu = new HashMap<>();
+        role3Menu.put(1, new MenuItem("Lihat User", Menu::lihatUser));
+        role3Menu.put(2, new MenuItem("Tambah User", Menu::tambahUser));
+        role3Menu.put(3, new MenuItem("Hapus User", Menu::hapusUser));
+        role3Menu.put(4, new MenuItem("Lihat Quiz", Menu::lihatQuiz));
+        role3Menu.put(5, new MenuItem("Tambah Quiz", Menu::tambahQuiz));
+        role3Menu.put(6, new MenuItem("Hapus Quiz", Menu::hapusQuiz));
+        MENU_OPTIONS.put(3, role3Menu);
     }
 
     public static void displayMenu(UserModel user) {
@@ -30,25 +42,16 @@ public class Menu {
         while (true) {
             System.out.println("Pilih menu:");
 
-            if (role.equals("1")) { // Role 1: Mengerjakan quiz
-                System.out.println("1. Lihat Quiz");
-                System.out.println("2. Tambah Quiz");
-                System.out.println("3. Hapus Quiz");
-            } else if (role.equals("2")) { // Role 2: Mengerjakan quiz, melihat semua user
-                System.out.println("1. Lihat User");
-                System.out.println("2. Lihat Quiz");
-                System.out.println("3. Tambah Quiz");
-                System.out.println("4. Hapus Quiz");
-            } else if (role.equals("3")) { // Role 3: Mengerjakan quiz, melihat semua user, edit user, hapus user
-                System.out.println("1. Lihat User");
-                System.out.println("2. Tambah User");
-                System.out.println("3. Hapus User");
-                System.out.println("4. Lihat Quiz");
-                System.out.println("5. Tambah Quiz");
-                System.out.println("6. Hapus Quiz");
-            } else {
+            if (!MENU_OPTIONS.containsKey(Integer.parseInt(role))) {
                 System.out.println("Role tidak dikenali. Keluar dari menu.");
                 return;
+            }
+
+            Map<Integer, MenuItem> roleMenu = MENU_OPTIONS.get(Integer.parseInt(role));
+            for (Map.Entry<Integer, MenuItem> entry : roleMenu.entrySet()) {
+                int choice = entry.getKey();
+                MenuItem menuItem = entry.getValue();
+                System.out.println(choice + ". " + menuItem.getName());
             }
 
             System.out.println("0. Keluar");
@@ -61,18 +64,11 @@ public class Menu {
                 return;
             }
 
-            if (role.equals("1") && (choice < 1 || choice > 3)) {
-                System.out.println("Pilihan tidak valid. Silakan coba lagi.");
-            } else if (role.equals("2") && (choice < 1 || choice > 4)) {
-                System.out.println("Pilihan tidak valid. Silakan coba lagi.");
-            } else if (role.equals("3") && (choice < 1 || choice > 6)) {
+            if (!roleMenu.containsKey(choice)) {
                 System.out.println("Pilihan tidak valid. Silakan coba lagi.");
             } else {
-                if (MENU_OPTIONS.containsKey(choice)) {
-                    MENU_OPTIONS.get(choice).run();
-                } else {
-                    System.out.println("Pilihan tidak valid. Silakan coba lagi.");
-                }
+                MenuItem selectedMenuItem = roleMenu.get(choice);
+                selectedMenuItem.getAction().run();
             }
         }
     }
@@ -94,7 +90,7 @@ public class Menu {
         // Melakukan operasi tambah ke database menggunakan UserModel
         user.create();
 
-        System.out.println("Menu Tambah Quizazzzz");
+        System.out.println("Menu Tambah User");
     }
 
     public static void hapusUser() {
@@ -118,10 +114,28 @@ public class Menu {
         // Melakukan operasi tambah ke database menggunakan UserModel
         user.create();
 
-        System.out.println("Menu Tambah Quizazzzz");
+        System.out.println("Menu Tambah Quiz");
     }
 
     public static void hapusQuiz() {
         System.out.println("Menu Hapus Quiz");
+    }
+
+    private static class MenuItem {
+        private String name;
+        private Runnable action;
+
+        public MenuItem(String name, Runnable action) {
+            this.name = name;
+            this.action = action;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Runnable getAction() {
+            return action;
+        }
     }
 }
