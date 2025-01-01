@@ -80,7 +80,7 @@ public class UserModel extends Model {
 
         List<Map<String, Object>> result = this
                 .where("nama = '" + username + "'")
-                .andWhere("password = '" + hashedPassword + "'")
+                .andWhere("password = '" + password + "'")
                 .limit(1)
                 .executeQuery();
 

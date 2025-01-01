@@ -9,7 +9,7 @@ import java.sql.*;
  * @author Microvac
  */
 public class Koneksi {
-    private static final String DATABASE_PATH = "D:\\databagas\\kuliah\\ms-access\\Kampus.accdb";
+    private static final String DATABASE_PATH = "D:\\databagas\\db_access\\UAS.accdb";
 
 
     public static Connection getConnection() {

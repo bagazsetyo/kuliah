@@ -1,5 +1,6 @@
 <?php 
-
+// allow memory_limit  
+ini_set('memory_limit', -1);
 function dd(){
     // get all arguments 
     $args = func_get_args();
@@ -59,16 +60,17 @@ function dd(){
     1. Inisialisasi populasi awal secara acak
     <?php
     $goal = array(
-        array(1,2,3),
-        array(8,'x',4),
-        array(7,6,5)
+        array(1,4,7),
+        array(2,5,8),
+        array(3,6,'x')
     );
 
     // random 3x3 
     // $random = array(1,2,3,4,5,6,7,8,'x');
     // shuffle($random);
     // $random = array(1,2,3,4,5,6,7,8,'x');
-    $random = array(2,8,3,1,6,4,7,5,'x');
+    // $random = array(1,2,3,4,5,6,7,8,'x');
+    $random = array(4,2,1,3,5,6,7,8,'x');
     $random = array_chunk($random, 3);
 
     ?>
@@ -272,7 +274,7 @@ function dd(){
             $newMinRandom = [];
             foreach ($manhattanDistanceParent as $key => $value) {
                 // get depth value 
-                if($depth <= 1000){
+                if($depth <= 15000){
                     $depth++;
                 } else {
                     $error = 1;
@@ -347,7 +349,79 @@ function dd(){
             return $table;
         }
 
-        echo createTableChildren($manhattanDistance);
+        //get list correct path 
+        function getCorrectPath($manhattanDistance, $correctPath = array()){
+            foreach($manhattanDistance as $direction => $value) {
+                if($value['hn'] == 0) {
+                    $correctPath[] = [
+                        'direction' => $direction,
+                        'children' => $value['random'],
+                        'fn' => $value['fn'],
+                        'gn' => $value['gn'],
+                        'hn' => $value['hn']
+                    ];
+                    return $correctPath;
+                }
+
+                if(!empty($value['children'])) {
+                    $correctPath[] = [
+                        'direction' => $direction,
+                        'children' => $value['random'],
+                        'fn' => $value['fn'],
+                        'gn' => $value['gn'],
+                        'hn' => $value['hn']
+                    ];
+
+                    $correctPath = getCorrectPath($value['children'], $correctPath);
+                }
+            }
+
+            // return $correctPath;
+            return $correctPath;
+        }
+
+        // dd($manhattanDistance);
+
+        $correctPath = getCorrectPath($manhattanDistance);
+
+        // create table for correct path 
+        function createTableCorrectPath($correctPath){
+            $table = '<table class="teble-2" style="width: 100%;">';
+            $chunk = array_chunk($correctPath, 4);
+            foreach($chunk as $key => $value) {
+                $table .= '<tr>';
+                foreach($value as $k => $v) {
+                    $table .= '<td>';
+                    $table .= '<h4>Step '. ($key * 4 + $k + 1).'</h4>';
+                    $table .= 'Direction : '.$v['direction'];
+                    $table .= '<br>';
+                    $table .= "fn = ".$v['fn']."<br>gn = ".$v['gn']."<br>hn = ".$v['hn'];
+                    $table .= '<br>';
+                    $table .= '<table class="finish">';
+                    foreach($v['children'] as $r) {
+                        $table .= '<tr>';
+                        foreach($r as $v) {
+                            if($v == 'x') {
+                                $table .= '<td style="background-color: black; color: white;">'.$v.'</td>';
+                            } else {
+                                $table .= '<td>'.$v.'</td>';
+                            }
+                        }
+                        $table .= '</tr>';
+                    }
+                    $table .= '</table>';
+                    $table .= '</td>';
+                }
+                $table .= '</tr>';
+            }
+            $table .= '</table>';
+
+            return $table;
+        }
+
+        echo createTableCorrectPath($correctPath);
+
+        // echo createTableChildren($manhattanDistance);
     ?>
 </body>
 </html>

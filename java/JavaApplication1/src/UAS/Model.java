@@ -156,6 +156,14 @@ public class Model {
         this.insert();
     }
     
+    public void destroy(int id) {
+        this.delete(id);
+    }
+    
+    public void edit() {
+        this.update();
+    }
+    
     public void insert() {
         // Implementasi penyimpanan ke database menggunakan kolom-kolom yang telah ditentukan
         // Anda dapat menyesuaikan kode ini sesuai dengan kebutuhan Anda
@@ -197,4 +205,88 @@ public class Model {
             System.out.println("Gagal mendapatkan koneksi ke database");
         }
     }
+    
+    public void delete(int id) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            // Mendapatkan koneksi ke database
+            connection = Koneksi.getConnection();
+
+            // Membangun query DELETE
+            String query = "DELETE FROM " + tableName + " WHERE id = ?";
+
+            // Menyiapkan pernyataan SQL
+            statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+
+            // Mengeksekusi query DELETE
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Data berhasil dihapus.");
+            } else {
+                System.out.println("Data dengan ID " + id + " tidak ditemukan.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Menutup sumber daya JDBC
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void update() {
+
+        StringBuilder setClause = new StringBuilder();
+
+        for (Map.Entry<String, Object> entry : columns.entrySet()) {
+            String columnName = entry.getKey();
+            Object columnValue = entry.getValue();
+
+            // Skip ID column
+            if (!columnName.equals("ID")) {
+                setClause.append(columnName).append(" = '").append(columnValue).append("',");
+            }
+        }
+
+        // Hapus koma terakhir
+        setClause.deleteCharAt(setClause.length() - 1);
+
+        // Lakukan operasi pembaruan data ke database
+        String query = "UPDATE " + tableName + " SET " + setClause + " WHERE ID = " + columns.get("ID");
+        System.out.println("Query: " + query);
+
+        // Eksekusi query ke database
+        Connection connection = Koneksi.getConnection();
+        if (connection != null) {
+            try {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.executeUpdate();
+                System.out.println("Data berhasil diperbarui di database");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            System.out.println("Gagal mendapatkan koneksi ke database");
+        }
+    }
+
 }

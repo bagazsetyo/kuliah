@@ -15,11 +15,13 @@ import java.util.Scanner;
  */
 public class Kampus {
     public static void main(String[] args) {
-        // Menggunakan input untuk meminta username dan password
         Scanner scanner = new Scanner(System.in);
-        UserModel authenticatedUser = new UserModel();
+        UserModel authenticatedUser = null; // Inisialisasi dengan null
+        boolean loginSuccess = false;
 
-        while (true) {
+        while (!loginSuccess) {
+            authenticatedUser = new UserModel(); // Inisialisasi objek UserModel di dalam loop
+
             System.out.print("Masukkan username: ");
             String username = scanner.nextLine();
             System.out.print("Masukkan password: ");
@@ -28,7 +30,7 @@ public class Kampus {
             authenticatedUser = authenticatedUser.checkCredentials(username, password);
 
             if (authenticatedUser != null) {
-                break;
+                loginSuccess = true;
             } else {
                 System.out.println("Username atau password salah. Silakan coba lagi.");
             }
@@ -40,7 +42,6 @@ public class Kampus {
             System.out.println("Gagal melakukan login.");
         }
 
-        // Menutup scanner
         scanner.close();
     }
 }

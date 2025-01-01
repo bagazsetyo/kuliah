@@ -14,41 +14,32 @@ public class MsAccessAkses {
 
     public static void main(String[] args) {
         try {
-            String alamat = "jdbc:ucanaccess://D:\\databagas\\db_access\\Mahasiswa.accdb";
-            Connection con = DriverManager.getConnection(alamat);
-            String kueri = "Select nim, nama, angkatan, kelas, jurusan, alamat, tanggal_lahir from Mahasiswa";
+            String location = "jdbc:ucanaccess://D:\\databagas\\db_access\\dbwisata.accdb";
+            Connection con = DriverManager.getConnection(location);
+            String kueri = "Select * from wisata ORDER BY CONVERT(id_wisata, INTEGER) ASC";
             PreparedStatement ps = con.prepareStatement(kueri);
 
             ResultSet rs = ps.executeQuery();
 
             System.out.println("-----------------------------------------------------------------------------------------------------------------------");
             System.out.println(
-                    "| NIM        |"
-                    + " Nama                      |"
-                    + " Angkatan |"
-                    + " Kelas      |"
-                    + " Jurusan   |"
-                    + " Alamat    |"
-                    + " Tanggal Lahir              |"
+                    "| ID         |"
+                    + " Nama Lokasi                              |"
+                    + " Alamat               |"
+                    + " Rangking             |"
             );
             System.out.println("-----------------------------------------------------------------------------------------------------------------------");
             while (rs.next()) {
-                String nim = rs.getString(1);
-                String nama = rs.getString(2);
-                String angkatan = rs.getString(3);
-                String kelas = rs.getString(4);
-                String jurusan = rs.getString(5);
-                String alamat_mhs = rs.getString(6);
-                String tanggal_lahir = rs.getString(7);
+                String id_lokasi = rs.getString("Id_wisata");
+                String nama_lokasi = rs.getString("Nama_lokasi");
+                String alamat = rs.getString("Alamat_lokasi");
+                String rangking = rs.getString("Rangking");
                 System.out.format(
-                        "| %-5s | %-25s | %-8s | %-9s | %-9s | %-9s | %-9s |\n",
-                        nim, 
-                        nama, 
-                        angkatan, 
-                        kelas, 
-                        jurusan, 
-                        alamat_mhs, 
-                        tanggal_lahir
+                        "| %-10s | %-40s | %-20s | %-20s |\n",
+                        id_lokasi,
+                        nama_lokasi,
+                        alamat,
+                        rangking
                 );
             }
             System.out.println("-----------------------------------------------------------------------------------------------------------------------");

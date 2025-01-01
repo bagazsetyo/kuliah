@@ -26,3 +26,5 @@ Nama := cari_namasuplier;
 dbms_output.put_line(Nama);
 End;
 /
+
+
