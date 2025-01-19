@@ -1,77 +1,122 @@
 package com.example.belajar_android_sturio;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private Context context;
+    private static final String DATABASE_NAME = "product.db";
+    private static final int DATABASE_VERSION = 2;
 
-    private static final String DATABASE_NAME = "apotek.db";
-    private static final int DATABASE_VERSION = 1;
-
-    private static final String TABLE_OBAT = "obat";
-    private static final String TABLE_TRANSAKSI = "transaksi";
-    private static final String TABLE_PELANGGAN = "pelanggan";
-    private static final String TABLE_STOK = "stok";
-
-    private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_TITLE = "title";
+//    obat
+    private static final String TABLE_NAME = "products";
+    private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_PRICE = "price";
+    private static final String COLUMN_QTY = "qty";
 
-    private static final String COLUMN_TRANSACTION_ID = "transaction_id";
-    private static final String COLUMN_DATE = "date";
-    private static final String COLUMN_TOTAL = "total";
-
-    private static final String COLUMN_CUSTOMER_ID = "customer_id";
-    private static final String COLUMN_CUSTOMER_NAME = "customer_name";
-    private static final String COLUMN_ADDRESS = "address";
-
-    private static final String COLUMN_STOCK_ID = "stock_id";
-    private static final String COLUMN_QUANTITY = "quantity";
+//    checkout
+    private static final String TABLE_CHECKOUT = "checkouts";
+    private static final String COLUMN_CHECKOUT_ID = "id";
+    private static final String COLUMN_PRODUCT_ID = "product_id";
+    private static final String COLUMN_CHECKOUT_DATE = "checkout_date";
+    private static final String COLUMN_CHECKOUT_QTY = "quantity";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTableObat = "CREATE TABLE " + TABLE_OBAT + " (" +
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_TITLE + " TEXT, " +
-                COLUMN_NAME + " TEXT)";
+                COLUMN_NAME + " TEXT UNIQUE, " +
+                COLUMN_PRICE + " REAL, " +
+                COLUMN_QTY + " INTEGER)";
 
-        String createTableTransaksi = "CREATE TABLE " + TABLE_TRANSAKSI + " (" +
-                COLUMN_TRANSACTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_DATE + " TEXT, " +
-                COLUMN_TOTAL + " REAL)";
+        String createCheckoutTable = "CREATE TABLE " + TABLE_CHECKOUT + " (" +
+                COLUMN_CHECKOUT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_PRODUCT_ID + " INTEGER, " +
+                COLUMN_CHECKOUT_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP, " +
+                COLUMN_CHECKOUT_QTY + " INTEGER, " +
+                "FOREIGN KEY(" + COLUMN_PRODUCT_ID + ") REFERENCES " +
+                TABLE_NAME + "(" + COLUMN_ID + "))";
 
-        String createTablePelanggan = "CREATE TABLE " + TABLE_PELANGGAN + " (" +
-                COLUMN_CUSTOMER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_CUSTOMER_NAME + " TEXT, " +
-                COLUMN_ADDRESS + " TEXT)";
-
-        String createTableStok = "CREATE TABLE " + TABLE_STOK + " (" +
-                COLUMN_STOCK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_QUANTITY + " INTEGER)";
-
-        db.execSQL(createTableObat);
-        db.execSQL(createTableTransaksi);
-        db.execSQL(createTablePelanggan);
-        db.execSQL(createTableStok);
+        db.execSQL(createTable);
+        db.execSQL(createCheckoutTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop tables if they exist
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OBAT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRANSAKSI);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PELANGGAN);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STOK);
-
-        // Recreate tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHECKOUT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
+    }
+
+    public void saveOrUpdateProduct(String name, double price, int qty) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, name);
+        values.put(COLUMN_PRICE, price);
+        values.put(COLUMN_QTY, qty);
+
+        long id = db.replace(TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public Cursor getAllProducts() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+    }
+
+    public void addToCheckout(long productId, int quantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT " + COLUMN_CHECKOUT_QTY + " FROM " + TABLE_CHECKOUT + " WHERE " + COLUMN_PRODUCT_ID + " = ?",
+                new String[]{String.valueOf(productId)}
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int existingQty = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CHECKOUT_QTY));
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_CHECKOUT_QTY, existingQty + quantity);
+            db.update(TABLE_CHECKOUT, values, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(productId)});
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_PRODUCT_ID, productId);
+            values.put(COLUMN_CHECKOUT_QTY, quantity);
+            db.insert(TABLE_CHECKOUT, null, values);
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+    }
+
+
+    public void deleteProduct(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public Cursor getCheckoutItems() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery(
+                "SELECT c.id, p.name, p.price, c.quantity " +
+                        "FROM " + TABLE_CHECKOUT + " c " +
+                        "JOIN " + TABLE_NAME + " p ON c.product_id = p.id",
+                null
+        );
+    }
+
+    public void clearCheckout() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_CHECKOUT, null, null);
+        db.close();
     }
 }

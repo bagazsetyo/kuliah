@@ -19,7 +19,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.menu_profile);
+        bottomNavigationView.setSelectedItemId(R.id.menu_checkout);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -35,7 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
                     finish();
                     return true;
 
-                case R.id.menu_profile:
+                case R.id.menu_checkout:
                     return true;
             }
             return false;
